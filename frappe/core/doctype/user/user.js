@@ -46,6 +46,18 @@ frappe.ui.form.on("User", {
 		}
 	},
 
+	region:function(frm){
+		if (frm.doc.region) {
+			frappe.call({
+				"method": "frappe.core.doctype.user.user.create_region_wise_user_permission",
+				args: {
+					region: frm.doc.region,
+					email: frm.doc.email
+				},
+			})
+		}
+	},
+
 	module_profile: function (frm) {
 		if (frm.doc.module_profile) {
 			frappe.call({
@@ -98,6 +110,7 @@ frappe.ui.form.on("User", {
 		}
 	},
 	refresh: function (frm) {
+		frm.dashboard.links_area.hide();
 		let doc = frm.doc;
 
 		if (frm.is_new()) {
@@ -129,7 +142,7 @@ frappe.ui.form.on("User", {
 
 		if (!frm.is_new()) {
 			if (has_access_to_edit_user()) {
-				frm.add_custom_button(
+				/* frm.add_custom_button(
 					__("Set User Permissions"),
 					function () {
 						frappe.route_options = {
@@ -147,12 +160,12 @@ frappe.ui.form.on("User", {
 							user: frm.doc.name,
 						}),
 					__("Permissions")
-				);
+				);*/
 
 				frm.toggle_display(["sb1", "sb3", "modules_access"], true);
 			}
 
-			frm.add_custom_button(
+			/* frm.add_custom_button(
 				__("Reset Password"),
 				function () {
 					frappe.call({
@@ -163,7 +176,7 @@ frappe.ui.form.on("User", {
 					});
 				},
 				__("Password")
-			);
+			); */
 
 			if (frappe.user.has_role("System Manager")) {
 				frappe.db.get_single_value("LDAP Settings", "enabled").then((value) => {
@@ -258,11 +271,11 @@ frappe.ui.form.on("User", {
 					found = 1;
 				}
 			}
-			if (!found) {
+			/* if (!found) {
 				frm.add_custom_button(__("Create User Email"), function () {
 					frm.events.create_user_email(frm);
 				});
-			}
+			}*/
 		}
 
 		if (frappe.route_flags.unsaved === 1) {

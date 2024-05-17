@@ -1,6 +1,7 @@
 # Copyright (c) 2022, Frappe Technologies Pvt. Ltd. and Contributors
 # License: MIT. See LICENSE
 
+import base64
 import io
 import mimetypes
 import os
@@ -775,6 +776,56 @@ def get_permission_query_conditions(user: str | None = None) -> str:
 		OR (`tabFile`.`attached_to_doctype` IN ({readable_doctypes}))
 	"""
 
+@frappe.whitelist()
+def zip_files(files: str):
+	files = frappe.parse_json(files)
+	frappe.response["filename"] = "files.zip"
+	frappe.response["filecontent"] = zipfiles(files)
+	return zipfiles(files)
+
+def zipfiles(files):
+	zip_file = io.BytesIO()
+	zf = zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED)
+	for _file in files:
+		if isinstance(_file, str):
+			_file = frappe.get_doc("File", {"file_name": _file})
+		if _file.is_folder:
+			continue
+		zf.writestr(_file.file_name, _file.get_content())
+	zf.close()
+	return zip_file.getvalue()
+
+def get_content(self) -> bytes:
+	if self.is_folder:
+		frappe.throw(("Cannot get file contents of a Folder"))
+	if self.get("content"):
+		self._content = self.content
+		if self.decode:
+			self._content = decode_file_content(self._content)
+			self.decode = False
+		# self.content = None # TODO: This needs to happen; make it happen somehow
+		return self._content
+
+
+def decode_file_content(content: bytes) -> bytes:
+	if isinstance(content, str):
+		content = content.encode("utf-8")
+	if b"," in content:
+		content = content.split(b",")[1]
+	return safe_b64decode(content)
+
+
+
+def safe_b64decode(binary: bytes) -> bytes:
+	"""Adds padding if doesn't already exist before decoding.
+	This attempts to avoid the `binascii.Error: Incorrect padding` error raised
+	when the number of trailing = is simply not enough :crie:. Although, it may
+	be an indication of corrupted data.
+	Refs:
+	        * https://en.wikipedia.org/wiki/Base64
+	        * https://stackoverflow.com/questions/2941995/python-ignore-incorrect-padding-error-when-base64-decoding
+	"""
+	return base64.b64decode(binary + b"===")
 
 # Note: kept at the end to not cause circular, partial imports & maintain backwards compatibility
 from frappe.core.api.file import *

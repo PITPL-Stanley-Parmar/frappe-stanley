@@ -19,19 +19,17 @@
    "reqd": 1
   },
   {
-   "columns": 2,
    "default": "0",
    "fieldname": "is_primary_phone",
    "fieldtype": "Check",
-   "in_list_view": 1,
+   "hidden": 1,
    "label": "Is Primary Phone"
   },
   {
-   "columns": 2,
    "default": "0",
    "fieldname": "is_primary_mobile_no",
    "fieldtype": "Check",
-   "in_list_view": 1,
+   "hidden": 1,
    "label": "Is Primary Mobile"
   }
  ],

@@ -303,7 +303,7 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 							}
 
 							// advanced search
-							if (locals && locals["DocType"]) {
+							/* if (locals && locals["DocType"]) {
 								// not applicable in web forms
 								r.results.push({
 									html:
@@ -315,7 +315,7 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 									value: "advanced_search__link_option",
 									action: me.open_advanced_search,
 								});
-							}
+							}*/
 						}
 						me.$input.cache[doctype][term] = r.results;
 						me.awesomplete.list = me.$input.cache[doctype][term];
