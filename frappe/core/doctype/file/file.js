@@ -27,6 +27,21 @@ frappe.ui.form.on("File", {
 		if (frm.doc.file_name && frm.doc.file_name.split(".").splice(-1)[0] === "zip") {
 			frm.add_custom_button(__("Unzip"), () => frm.trigger("unzip"));
 		}
+		if (!frm.doc.__islocal) {
+			if(frm.doc.name && frm.doc.docstatus !=1 ){
+				if(frm.has_perm('delete')) {
+					frm.add_custom_button(__("Delete"), function(){
+						frappe.model.delete_doc(frm.doc.doctype, frm.doc.name, function() {
+							window.history.back();
+						}, __('Actions'));
+					})     
+				}
+			}
+		}
+		frm.page.wrapper.find(".comment-box").css({"display":"none"});
+		frm.page.wrapper.find(".timeline-content").css({"display":"none"});
+		frm.page.wrapper.find(".timeline-badge").css({"display":"none"});
+		frm.page.wrapper.find(".new-timeline").css({"display":"none"});
 	},
 
 	preview_file: function (frm) {

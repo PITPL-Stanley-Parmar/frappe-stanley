@@ -317,14 +317,14 @@ export default class NumberCardWidget extends Widget {
 					this.render_card();
 				},
 			},
-			{
+			/* {
 				label: __("Edit"),
 				action: "action-edit",
 				handler: () => {
 					let number_card = this.number_card_name || this.name;
 					frappe.set_route("Form", "Number Card", number_card);
 				},
-			},
+			}, */
 		];
 
 		this.set_card_actions(actions);

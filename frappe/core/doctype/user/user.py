@@ -1223,3 +1223,55 @@ def get_enabled_users():
 		return enabled_users
 
 	return frappe.cache().get_value("enabled_users", _get_enabled_users)
+
+def share_doc_with_approver(doc, user):
+	# if approver does not have permissions, share
+	parent_user = []
+	test_user = frappe.get_doc("User", user)
+
+	frappe.share.add(doc.doctype, doc.name, test_user.name, write=1, flags={"ignore_share_permission": True})
+	while (test_user.reports_to):
+		user1 = frappe.get_doc("User", test_user.reports_to)
+		test_user = user1
+		frappe.share.add(doc.doctype, doc.name, test_user.name, write=1, flags={"ignore_share_permission": True})
+
+
+	# if not test_user.reports_to:
+
+
+	# if not frappe.has_permission(doc=doc, ptype="read", user=user):
+
+	# 	frappe.share.add(doc.doctype, doc.name, user, read=1, write=1, flags={"ignore_share_permission": True})
+
+	# 	frappe.msgprint(
+	# 		_("Shared with the user {0} with {1} access").format(user, frappe.bold("submit"), alert=True)
+	# 	)
+	# remove shared doc if approver changes
+	doc_before_save = doc.get_doc_before_save()
+	if doc_before_save:
+		approvers = {
+			"Lead": "lead_transfer",
+			"Visit": "reports_to",
+			"Address": "created_by"
+		}
+
+		approver = approvers.get(doc.doctype)
+		if doc_before_save.get(approver) != doc.get(approver):
+			frappe.share.remove(doc.doctype, doc.name, doc_before_save.get(approver))
+
+
+
+@frappe.whitelist()
+def create_region_wise_user_permission(region,email):
+	if region != "HO" or email not in ["admin@example.com", "admin@example.co"]:
+		if frappe.db.exists({"doctype": "User Permission", "user": email}):
+			user_permission = frappe.get_doc("User Permission", {"user": email, "allow": "Region"})
+			if user_permission:
+				user_permission.for_value = region
+				user_permission.save()
+		else:
+			create_user_permission = frappe.new_doc("User Permission")
+			create_user_permission.user = email
+			create_user_permission.allow = "Region"
+			create_user_permission.for_value = region
+			create_user_permission.insert(ignore_mandatory=True, ignore_permissions=True)

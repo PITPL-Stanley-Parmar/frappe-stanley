@@ -1629,7 +1629,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			});
 		}
 
-		if (frappe.model.can_set_user_permissions(doctype)) {
+		/*if (frappe.model.can_set_user_permissions(doctype)) {
 			items.push({
 				label: __("User Permissions", null, "Button in list view menu"),
 				action: () =>
@@ -1638,24 +1638,24 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 					}),
 				standard: true,
 			});
-		}
+		}*/
 
 		if (frappe.user_roles.includes("System Manager")) {
-			items.push({
+			/*items.push({
 				label: __("Role Permissions Manager", null, "Button in list view menu"),
 				action: () =>
 					frappe.set_route("permission-manager", {
 						doctype,
 					}),
 				standard: true,
-			});
+			});*/
 		}
 
 		if (
 			frappe.model.can_create("Custom Field") &&
 			frappe.model.can_create("Property Setter")
 		) {
-			items.push({
+			/*items.push({
 				label: __("Customize", null, "Button in list view menu"),
 				action: () => {
 					if (!this.meta) return;
@@ -1669,16 +1669,16 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				},
 				standard: true,
 				shortcut: "Ctrl+J",
-			});
+			});*/
 		}
 
-		items.push({
+		/*items.push({
 			label: __("Toggle Sidebar", null, "Button in list view menu"),
 			action: () => this.toggle_side_bar(),
 			condition: () => !this.hide_sidebar,
 			standard: true,
 			shortcut: "Ctrl+K",
-		});
+		});*/
 
 		if (frappe.user.has_role("System Manager") && frappe.boot.developer_mode === 1) {
 			// edit doctype
@@ -1967,7 +1967,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			};
 		};
 
-		// bulk edit
+		/*// bulk edit
 		if (has_editable_fields(doctype) && !frappe.model.has_workflow(doctype)) {
 			actions_menu_items.push(bulk_edit());
 		}
@@ -2004,7 +2004,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		if (frappe.model.can_delete(doctype) && !frappe.model.has_workflow(doctype)) {
 			actions_menu_items.push(bulk_delete());
 		}
-
+*/
 		return actions_menu_items;
 	}
 

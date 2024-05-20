@@ -891,9 +891,9 @@ class FilterArea {
 frappe.views.view_modes = [
 	"List",
 	"Report",
-	"Dashboard",
+	// "Dashboard",
 	"Gantt",
-	"Kanban",
+	// "Kanban",
 	"Calendar",
 	"Image",
 	"Inbox",
